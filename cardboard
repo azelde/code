@@ -1,0 +1,116 @@
+const int BUTTON1_PIN = 2;      
+const int BUTTON2_PIN = 3;       
+const int BUTTON3_PIN = 4;      
+const int BUTTON4_PIN = 5;     
+const int BUTTON5_PIN = 6;       
+const int BUTTON6_PIN = 7;     
+
+
+
+int counter = 0;
+
+
+int button1State = HIGH;
+int lastButton1State = HIGH;
+unsigned long lastDebounceTime1 = 0;
+
+
+int button2State = HIGH;
+int lastButton2State = HIGH;
+unsigned long lastDebounceTime2 = 0;
+
+
+int button3State = HIGH;
+int lastButton3State = HIGH;
+unsigned long lastDebounceTime3 = 0;
+
+
+int button4State = HIGH;
+int lastButton4State = HIGH;
+unsigned long lastDebounceTime4 = 0;
+
+
+int button5State = HIGH;
+int lastButton5State = HIGH;
+unsigned long lastDebounceTime5 = 0;
+
+
+int button6State = HIGH;
+int lastButton6State = HIGH;
+unsigned long lastDebounceTime6 = 0;
+
+
+unsigned long debounceDelay = 50;    // Debounce delay in milliseconds
+
+void setup() {
+
+  Serial.begin(9600);
+  
+
+  pinMode(BUTTON1_PIN, INPUT_PULLUP);
+  pinMode(BUTTON2_PIN, INPUT_PULLUP);
+  pinMode(BUTTON3_PIN, INPUT_PULLUP);
+  pinMode(BUTTON4_PIN, INPUT_PULLUP);
+  pinMode(BUTTON5_PIN, INPUT_PULLUP);
+  pinMode(BUTTON6_PIN, INPUT_PULLUP);
+  
+
+
+  Serial.println("Single Counter 6");
+  Serial.println("Buttons on pins 2–7 all increment the same counter");
+  Serial.println("Count: 0");
+  Serial.println("-----------------------------------");
+}
+
+void loop() {
+
+  processButton(BUTTON1_PIN, button1State, lastButton1State,
+                lastDebounceTime1, 1);
+  
+  processButton(BUTTON2_PIN, button2State, lastButton2State,
+                lastDebounceTime2, 2);
+
+  processButton(BUTTON3_PIN, button3State, lastButton3State,
+                lastDebounceTime3, 3);
+
+  processButton(BUTTON4_PIN, button4State, lastButton4State,
+                lastDebounceTime4, 4);
+
+  processButton(BUTTON5_PIN, button5State, lastButton5State,
+                lastDebounceTime5, 5);
+
+  processButton(BUTTON6_PIN, button6State, lastButton6State,
+                lastDebounceTime6, 6);
+}
+
+
+void processButton(int pin,
+                   int &buttonState,
+                   int &lastButtonState,
+                   unsigned long &lastDebounceTime,
+                   int buttonNum) {
+  int reading = digitalRead(pin);
+  
+  if (reading != lastButtonState) {
+    lastDebounceTime = millis();
+  }
+  
+  if ((millis() - lastDebounceTime) > debounceDelay) {
+    if (reading != buttonState) {
+      buttonState = reading;
+      
+      if (buttonState == LOW) {      // button pressed (active LOW)
+        counter++;                   // increment shared counter
+        
+        Serial.print("Button ");
+        Serial.print(buttonNum);
+        Serial.print(" pressed!  Count=");
+        Serial.println(counter);
+      } else {
+        
+      }
+    }
+  }
+  
+  lastButtonState = reading;
+}
